@@ -49,6 +49,8 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
   final GlobalKey _educationKey = GlobalKey();
   final GlobalKey _contactKey = GlobalKey();
 
+  String _activeSection = "home";
+
   Map<String, GlobalKey> get _sectionKeys => {
         "home": _heroKey,
         "about": _aboutKey,
@@ -58,6 +60,43 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
         "education": _educationKey,
         "contact": _contactKey,
       };
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_updateActiveSection);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_updateActiveSection);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  /// Determines which section is currently nearest the top of the
+  /// viewport and updates the navbar highlight accordingly.
+  void _updateActiveSection() {
+    String? closestKey;
+    double closestDistance = double.infinity;
+
+    for (final entry in _sectionKeys.entries) {
+      final ctx = entry.value.currentContext;
+      if (ctx == null) continue;
+      final box = ctx.findRenderObject() as RenderBox?;
+      if (box == null || !box.attached) continue;
+      final position = box.localToGlobal(Offset.zero);
+      final distance = (position.dy - 90).abs();
+      if (position.dy <= 140 && distance < closestDistance) {
+        closestDistance = distance;
+        closestKey = entry.key;
+      }
+    }
+
+    if (closestKey != null && closestKey != _activeSection) {
+      setState(() => _activeSection = closestKey!);
+    }
+  }
 
   void _scrollTo(String key) {
     final ctx = _sectionKeys[key]?.currentContext;
@@ -76,20 +115,135 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
       appBar: NavBar(
         onNavTap: _scrollTo,
         onContactTap: () => _scrollTo("contact"),
+        activeSection: _activeSection,
       ),
       body: SingleChildScrollView(
         controller: _scrollController,
         child: Column(
           children: [
             HeroSection(sectionKey: _heroKey, onViewWork: () => _scrollTo("projects")),
-            AboutSection(sectionKey: _aboutKey),
-            SkillsSection(sectionKey: _skillsKey),
-            ExperienceSection(sectionKey: _experienceKey),
-            ProjectsSection(sectionKey: _projectsKey),
-            EducationSection(sectionKey: _educationKey),
-            ContactFooter(sectionKey: _contactKey),
+            RevealOnScroll(child: AboutSection(sectionKey: _aboutKey)),
+            RevealOnScroll(child: SkillsSection(sectionKey: _skillsKey)),
+            RevealOnScroll(child: ExperienceSection(sectionKey: _experienceKey)),
+            RevealOnScroll(child: ProjectsSection(sectionKey: _projectsKey)),
+            RevealOnScroll(child: EducationSection(sectionKey: _educationKey)),
+            RevealOnScroll(child: ContactFooter(sectionKey: _contactKey)),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// ANIMATION HELPERS — scroll-reveal fade-in and hover-scale
+// =============================================================================
+
+/// Fades and slides a section in the first time it scrolls into view.
+/// Self-contained: no external packages, just a ScrollPosition listener
+/// checked against the section's own RenderBox position.
+class RevealOnScroll extends StatefulWidget {
+  final Widget child;
+  const RevealOnScroll({super.key, required this.child});
+
+  @override
+  State<RevealOnScroll> createState() => _RevealOnScrollState();
+}
+
+class _RevealOnScrollState extends State<RevealOnScroll>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 550),
+  );
+  bool _hasRevealed = false;
+  ScrollPosition? _position;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _position = Scrollable.maybeOf(context)?.position;
+      _position?.addListener(_checkVisibility);
+      _checkVisibility();
+    });
+  }
+
+  void _checkVisibility() {
+    if (_hasRevealed || !mounted) return;
+    final box = context.findRenderObject() as RenderBox?;
+    if (box == null || !box.attached) return;
+    final position = box.localToGlobal(Offset.zero);
+    final screenHeight = MediaQuery.of(context).size.height;
+    if (position.dy < screenHeight * 0.88) {
+      _hasRevealed = true;
+      _controller.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _position?.removeListener(_checkVisibility);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final t = Curves.easeOut.transform(_controller.value);
+        return Opacity(
+          opacity: t,
+          child: Transform.translate(
+            offset: Offset(0, (1 - t) * 28),
+            child: child,
+          ),
+        );
+      },
+      child: widget.child,
+    );
+  }
+}
+
+/// Wraps a card with a subtle lift + shadow on hover (desktop only —
+/// harmless no-op on touch devices since they never fire hover events).
+class HoverScale extends StatefulWidget {
+  final Widget child;
+  const HoverScale({super.key, required this.child});
+
+  @override
+  State<HoverScale> createState() => _HoverScaleState();
+}
+
+class _HoverScaleState extends State<HoverScale> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        transform: Matrix4.identity()..scale(_hovering ? 1.02 : 1.0),
+        transformAlignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: _hovering
+              ? [
+                  BoxShadow(
+                    color: AppColors.navy.withOpacity(0.12),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                ]
+              : [],
+        ),
+        child: widget.child,
       ),
     );
   }
@@ -213,11 +367,6 @@ class Responsive {
 // =============================================================================
 // DATA / PORTFOLIO_DATA.DART
 // =============================================================================
-
-// ---------------------------------------------------------------------------
-// All portfolio content lives here. Edit this file to update your details —
-// no need to touch the UI widgets.
-// ---------------------------------------------------------------------------
 
 class PersonalInfo {
   static const String name = "Nilam Shahaji Kolekar";
@@ -392,18 +541,18 @@ class AchievementsData {
 // WIDGETS / SECTION_WRAPPER.DART
 // =============================================================================
 
-/// Wraps every section with consistent max-width, padding, and optional
-/// background color/key (used for scroll-to-section navigation).
 class SectionWrapper extends StatelessWidget {
   final Widget child;
   final Color? backgroundColor;
   final GlobalKey? sectionKey;
+  final double extraTopPadding;
 
   const SectionWrapper({
     super.key,
     required this.child,
     this.backgroundColor,
     this.sectionKey,
+    this.extraTopPadding = 0,
   });
 
   @override
@@ -412,9 +561,11 @@ class SectionWrapper extends StatelessWidget {
       key: sectionKey,
       width: double.infinity,
       color: backgroundColor ?? AppColors.background,
-      padding: EdgeInsets.symmetric(
-        horizontal: Responsive.horizontalPadding(context),
-        vertical: Responsive.isMobile(context) ? 56 : 96,
+      padding: EdgeInsets.fromLTRB(
+        Responsive.horizontalPadding(context),
+        (Responsive.isMobile(context) ? 56 : 96) + extraTopPadding,
+        Responsive.horizontalPadding(context),
+        Responsive.isMobile(context) ? 56 : 96,
       ),
       child: Center(
         child: ConstrainedBox(
@@ -428,8 +579,6 @@ class SectionWrapper extends StatelessWidget {
   }
 }
 
-/// Small uppercase eyebrow label used above section headings
-/// (e.g. "EXPERIENCE", "PROJECTS").
 class SectionLabel extends StatelessWidget {
   final String text;
   const SectionLabel(this.text, {super.key});
@@ -462,8 +611,14 @@ class SectionLabel extends StatelessWidget {
 class NavBar extends StatelessWidget implements PreferredSizeWidget {
   final void Function(String key) onNavTap;
   final VoidCallback onContactTap;
+  final String activeSection;
 
-  const NavBar({super.key, required this.onNavTap, required this.onContactTap});
+  const NavBar({
+    super.key,
+    required this.onNavTap,
+    required this.onContactTap,
+    this.activeSection = "home",
+  });
 
   static const List<String> _navItems = [
     "About", "Skills", "Experience", "Projects", "Education",
@@ -474,46 +629,78 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
     final isMobile = Responsive.isMobile(context);
 
     return Container(
-      color: AppColors.surface,
+      color: AppColors.navy,
       padding: EdgeInsets.symmetric(
         horizontal: Responsive.horizontalPadding(context),
       ),
       child: Row(
         children: [
+          Container(
+            width: 28,
+            height: 28,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AppColors.accent,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Text(
+              "N",
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15),
+            ),
+          ),
+          const SizedBox(width: 10),
           Text(
             PersonalInfo.name,
-            style: Theme.of(context).textTheme.titleLarge,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+            ),
           ),
-          const Spacer(),
-          if (!isMobile) ...[
-            for (final item in _navItems)
-              TextButton(
-                onPressed: () => onNavTap(item.toLowerCase()),
-                child: Text(
-                  item,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
+          if (!isMobile)
+            Expanded(
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final item in _navItems)
+                      _NavButton(
+                        label: item,
+                        isActive: activeSection == item.toLowerCase(),
+                        onTap: () => onNavTap(item.toLowerCase()),
+                      ),
+                  ],
                 ),
               ),
-            const SizedBox(width: 8),
+            )
+          else
+            const Spacer(),
+          if (!isMobile) ...[
+            TextButton(
+              onPressed: () => downloadResume(PersonalInfo.resumeUrl, "Nilam-resume.pdf"),
+              style: TextButton.styleFrom(foregroundColor: Colors.white70),
+              child: const Text(
+                "Resume",
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+              ),
+            ),
+            const SizedBox(width: 12),
             ElevatedButton(
               onPressed: onContactTap,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.navy,
-                foregroundColor: Colors.white,
+                backgroundColor: Colors.white,
+                foregroundColor: AppColors.navy,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(24),
                 ),
               ),
-              child: const Text("Contact"),
+              child: const Text("Contact", style: TextStyle(fontWeight: FontWeight.w600)),
             ),
           ] else
             PopupMenuButton<String>(
-              icon: const Icon(Icons.menu, color: AppColors.textPrimary),
+              icon: const Icon(Icons.menu, color: Colors.white),
               onSelected: (v) =>
                   v == "contact" ? onContactTap() : onNavTap(v),
               itemBuilder: (context) => [
@@ -534,6 +721,73 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(72);
 }
 
+class _NavButton extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+  const _NavButton({required this.label, required this.isActive, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: TextButton(
+        onPressed: onTap,
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        ),
+        child: AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 200),
+          style: TextStyle(
+            color: isActive ? Colors.white : Colors.white60,
+            fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+            fontSize: 14,
+          ),
+          child: Text(label),
+        ),
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// SHARED HELPERS — link launching + resume download
+// =============================================================================
+
+/// Opens a URL — forces a new tab for http(s) links, but lets mailto/tel
+/// links hand off to the OS's default app instead of opening a blank tab.
+Future<void> launchUrlSmart(String url) async {
+  final uri = Uri.parse(url);
+  if (await canLaunchUrl(uri)) {
+    final isWebLink = uri.scheme == 'http' || uri.scheme == 'https';
+    await launchUrl(uri, webOnlyWindowName: isWebLink ? '_blank' : null);
+  }
+}
+
+/// Fetches the PDF as raw bytes and forces a real download via a Blob
+/// URL — more reliable than pointing an anchor's `download` attribute
+/// straight at a relative asset path.
+Future<void> downloadResume(String assetUrl, String downloadFileName) async {
+  try {
+    final request = await html.HttpRequest.request(
+      assetUrl,
+      responseType: 'arraybuffer',
+    );
+    final buffer = request.response as ByteBuffer;
+    final blob = html.Blob([buffer], 'application/pdf');
+    final blobUrl = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement(href: blobUrl)
+      ..setAttribute('download', downloadFileName)
+      ..style.display = 'none';
+    html.document.body?.append(anchor);
+    anchor.click();
+    anchor.remove();
+    html.Url.revokeObjectUrl(blobUrl);
+  } catch (e) {
+    await launchUrlSmart(assetUrl);
+  }
+}
+
 // =============================================================================
 // WIDGETS / HERO_SECTION.DART
 // =============================================================================
@@ -544,51 +798,27 @@ class HeroSection extends StatelessWidget {
 
   const HeroSection({super.key, required this.sectionKey, required this.onViewWork});
 
-  Future<void> _launch(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      // mailto/tel links should hand off to the OS's default app, not open
-      // as a browser tab — only force a new tab for regular http(s) links.
-      final isWebLink = uri.scheme == 'http' || uri.scheme == 'https';
-      await launchUrl(uri, webOnlyWindowName: isWebLink ? '_blank' : null);
-    }
-  }
-
-  /// Fetches the PDF as raw bytes and forces a real download via a Blob
-  /// URL. This is more reliable across browsers/dev-vs-release builds than
-  /// pointing an anchor's `download` attribute straight at a relative asset
-  /// path, which some browsers/environments will still just open instead
-  /// of downloading.
-  Future<void> _downloadResume(String assetUrl, String downloadFileName) async {
-    try {
-      final request = await html.HttpRequest.request(
-        assetUrl,
-        responseType: 'arraybuffer',
-      );
-      final buffer = request.response as ByteBuffer;
-      final blob = html.Blob([buffer], 'application/pdf');
-      final blobUrl = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.AnchorElement(href: blobUrl)
-        ..setAttribute('download', downloadFileName)
-        ..style.display = 'none';
-      html.document.body?.append(anchor);
-      anchor.click();
-      anchor.remove();
-      html.Url.revokeObjectUrl(blobUrl);
-    } catch (e) {
-      // Fallback: open in a new tab if the fetch fails (e.g. bad path).
-      final uri = Uri.parse(assetUrl);
-      if (await canLaunchUrl(uri)) await launchUrl(uri, webOnlyWindowName: '_blank');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final isMobile = Responsive.isMobile(context);
 
-    return SectionWrapper(
+    return Stack(
+      children: [
+        Positioned.fill(child: Container(color: AppColors.surface)),
+        Positioned(
+          top: -90,
+          right: -90,
+          child: _Blob(size: 260, color: AppColors.accent.withOpacity(0.06)),
+        ),
+        Positioned(
+          bottom: -120,
+          left: -80,
+          child: _Blob(size: 300, color: AppColors.navy.withOpacity(0.04)),
+        ),
+        SectionWrapper(
       sectionKey: sectionKey,
-      backgroundColor: AppColors.surface,
+      backgroundColor: Colors.transparent,
+      extraTopPadding: 40,
       child: Flex(
         direction: isMobile ? Axis.vertical : Axis.horizontal,
         crossAxisAlignment: isMobile
@@ -651,7 +881,7 @@ class HeroSection extends StatelessWidget {
                       child: const Text("View My Work"),
                     ),
                     OutlinedButton(
-                      onPressed: () => _downloadResume(
+                      onPressed: () => downloadResume(
                           PersonalInfo.resumeUrl, "Nilam-resume.pdf"),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.navy,
@@ -671,8 +901,8 @@ class HeroSection extends StatelessWidget {
                   alignment: isMobile ? WrapAlignment.center : WrapAlignment.start,
                   spacing: 18,
                   children: [
-                    _SocialIcon(child: const Icon(Icons.code, size: 18, color: AppColors.navy), onTap: () => _launch(PersonalInfo.github)),
-                    _SocialIcon(child: const Text("in", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppColors.navy)), onTap: () => _launch(PersonalInfo.linkedin)),
+                    _SocialIcon(child: const Icon(Icons.code, size: 18, color: AppColors.navy), onTap: () => launchUrlSmart(PersonalInfo.github)),
+                    _SocialIcon(child: const Text("in", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppColors.navy)), onTap: () => launchUrlSmart(PersonalInfo.linkedin)),
                   ],
                 ),
               ],
@@ -710,6 +940,24 @@ class HeroSection extends StatelessWidget {
             ),
         ],
       ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Soft circular accent shape used behind the hero content.
+class _Blob extends StatelessWidget {
+  final double size;
+  final Color color;
+  const _Blob({required this.size, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: color),
     );
   }
 }
@@ -851,10 +1099,6 @@ class SkillsSection extends StatelessWidget {
         ? double.infinity
         : (Responsive.contentMaxWidth(context) - 20) / 2;
 
-    // Chunk groups into pairs so each pair can be stretched to equal
-    // height together. Safe to use IntrinsicHeight here (unlike a Row
-    // with Expanded children) because every card has an explicit fixed
-    // width, so there's no flex-based intrinsic-size mismeasurement.
     final List<List<SkillGroup>> rows = [];
     for (int i = 0; i < SkillsData.groups.length; i += 2) {
       rows.add(SkillsData.groups.sublist(
@@ -882,7 +1126,7 @@ class SkillsSection extends StatelessWidget {
                         for (final group in row)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 20),
-                            child: _SkillCard(group: group, width: cardWidth),
+                            child: HoverScale(child: _SkillCard(group: group, width: cardWidth)),
                           ),
                       ],
                     )
@@ -894,7 +1138,7 @@ class SkillsSection extends StatelessWidget {
                             if (i > 0) const SizedBox(width: 20),
                             SizedBox(
                               width: cardWidth,
-                              child: _SkillCard(group: row[i], width: cardWidth),
+                              child: HoverScale(child: _SkillCard(group: row[i], width: cardWidth)),
                             ),
                           ],
                         ],
@@ -992,9 +1236,6 @@ class _TimelineItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Stack sizes itself to the Row (its only non-positioned child), then
-    // the connecting line stretches to match via top/bottom Positioned —
-    // this avoids IntrinsicHeight, which mis-measures wrapped text.
     return Stack(
       children: [
         if (!isLast)
@@ -1020,72 +1261,74 @@ class _TimelineItem extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: EdgeInsets.only(bottom: isLast ? 0 : 32),
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 12,
-                        runSpacing: 6,
-                        children: [
-                          Text(item.role, style: Theme.of(context).textTheme.titleLarge),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: AppColors.navy.withOpacity(0.06),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              item.period,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.navy,
+                child: HoverScale(
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 12,
+                          runSpacing: 6,
+                          children: [
+                            Text(item.role, style: Theme.of(context).textTheme.titleLarge),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: AppColors.navy.withOpacity(0.06),
+                                borderRadius: BorderRadius.circular(6),
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        item.company,
-                        style: const TextStyle(
-                          color: AppColors.accent,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      for (final point in item.points)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.only(top: 7, right: 10),
-                                child: CircleAvatar(
-                                  radius: 3,
-                                  backgroundColor: AppColors.slateLight,
+                              child: Text(
+                                item.period,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.navy,
                                 ),
                               ),
-                              Expanded(
-                                child: Text(
-                                  point,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                              ),
-                            ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          item.company,
+                          style: const TextStyle(
+                            color: AppColors.accent,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
                           ),
                         ),
-                    ],
+                        const SizedBox(height: 14),
+                        for (final point in item.points)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 7, right: 10),
+                                  child: CircleAvatar(
+                                    radius: 3,
+                                    backgroundColor: AppColors.slateLight,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    point,
+                                    style: Theme.of(context).textTheme.bodyMedium,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -1112,9 +1355,6 @@ class ProjectsSection extends StatelessWidget {
         ? double.infinity
         : (Responsive.contentMaxWidth(context) - 40) / 3;
 
-    // Chunk into rows of 3 so each row can be stretched to equal height —
-    // same safe pattern as Skills (fixed-width children, no Expanded, so
-    // IntrinsicHeight measures correctly).
     final List<List<ProjectItem>> rows = [];
     for (int i = 0; i < ProjectsData.items.length; i += 3) {
       rows.add(ProjectsData.items.sublist(
@@ -1142,7 +1382,7 @@ class ProjectsSection extends StatelessWidget {
                         for (final project in row)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 20),
-                            child: _ProjectCard(project: project, width: cardWidth),
+                            child: HoverScale(child: _ProjectCard(project: project, width: cardWidth)),
                           ),
                       ],
                     )
@@ -1154,7 +1394,7 @@ class ProjectsSection extends StatelessWidget {
                             if (i > 0) const SizedBox(width: 20),
                             SizedBox(
                               width: cardWidth,
-                              child: _ProjectCard(project: row[i], width: cardWidth),
+                              child: HoverScale(child: _ProjectCard(project: row[i], width: cardWidth)),
                             ),
                           ],
                         ],
@@ -1342,14 +1582,6 @@ class ContactFooter extends StatelessWidget {
   final GlobalKey sectionKey;
   const ContactFooter({super.key, required this.sectionKey});
 
-  Future<void> _launch(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      final isWebLink = uri.scheme == 'http' || uri.scheme == 'https';
-      await launchUrl(uri, webOnlyWindowName: isWebLink ? '_blank' : null);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final isMobile = Responsive.isMobile(context);
@@ -1386,20 +1618,8 @@ class ContactFooter extends StatelessWidget {
                 spacing: 16,
                 runSpacing: 16,
                 children: [
-                  // ElevatedButton.icon(
-                  //   onPressed: () => _launch("mailto:${PersonalInfo.email}"),
-                  //   icon: const Icon(Icons.email_outlined, size: 18),
-                  //   label: const Text("Email Me"),
-                  //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor: AppColors.accent,
-                  //     foregroundColor: Colors.white,
-                  //     elevation: 0,
-                  //     padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 18),
-                  //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  //   ),
-                  // ),
                   OutlinedButton.icon(
-                    onPressed: () => _launch(PersonalInfo.linkedin),
+                    onPressed: () => launchUrlSmart(PersonalInfo.linkedin),
                     icon: const Text("in", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Colors.white)),
                     label: const Text("LinkedIn"),
                     style: OutlinedButton.styleFrom(
@@ -1410,7 +1630,7 @@ class ContactFooter extends StatelessWidget {
                     ),
                   ),
                   OutlinedButton.icon(
-                    onPressed: () => _launch(PersonalInfo.github),
+                    onPressed: () => launchUrlSmart(PersonalInfo.github),
                     icon: const Icon(Icons.code, size: 18),
                     label: const Text("GitHub"),
                     style: OutlinedButton.styleFrom(

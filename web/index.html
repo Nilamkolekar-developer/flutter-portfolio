@@ -4,13 +4,58 @@
   <base href="$FLUTTER_BASE_HREF">
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Professional portfolio built with Flutter Web.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Portfolio</title>
+  <!-- Primary SEO -->
+  <title>Nilam Shahaji Kolekar — Flutter Developer</title>
+  <meta name="description" content="Flutter Developer with 2+ years of experience building cross-platform mobile apps and full-stack web systems. View my portfolio, projects, and experience.">
+  <meta name="author" content="Nilam Shahaji Kolekar">
+
+  <!-- Open Graph (LinkedIn, WhatsApp, Facebook link previews) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Nilam Shahaji Kolekar — Flutter Developer">
+  <meta property="og:description" content="Flutter Developer with 2+ years of experience building cross-platform mobile apps and full-stack web systems.">
+  <meta property="og:url" content="https://nilamkolekar-developer.github.io/flutter-portfolio/">
+  <meta property="og:image" content="https://nilamkolekar-developer.github.io/flutter-portfolio/assets/assets/image/image.jpg">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Nilam Shahaji Kolekar — Flutter Developer">
+  <meta name="twitter:description" content="Flutter Developer with 2+ years of experience building cross-platform mobile apps and full-stack web systems.">
+  <meta name="twitter:image" content="https://nilamkolekar-developer.github.io/flutter-portfolio/assets/assets/image/image.jpg">
+
   <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <meta name="theme-color" content="#0B1F3A">
+
+  <style>
+    /* Smooth fade-in once Flutter has painted its first frame, so the
+       page doesn't pop in abruptly. */
+    html, body { background: #F7F8FA; }
+    #app-loading-fade {
+      position: fixed; inset: 0; background: #F7F8FA;
+      z-index: 9999; opacity: 1; transition: opacity 500ms ease;
+      pointer-events: none;
+    }
+    #app-loading-fade.hidden { opacity: 0; }
+  </style>
 </head>
 <body>
+  <div id="app-loading-fade"></div>
   <script src="flutter_bootstrap.js" async></script>
+  <script>
+    // Fade the cover div out shortly after first paint, revealing the
+    // Flutter app underneath with a smooth transition instead of a hard cut.
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        var el = document.getElementById('app-loading-fade');
+        if (el) {
+          el.classList.add('hidden');
+          setTimeout(function () { el.remove(); }, 600);
+        }
+      }, 300);
+    });
+  </script>
 </body>
 </html>
