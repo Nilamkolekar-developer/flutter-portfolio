@@ -6,19 +6,7 @@ A corporate/professional single-page portfolio built with Flutter Web, showcasin
 
 ---
 
-## 📸 Preview
 
-<!-- TODO: Replace these with real screenshots. Save them in a `screenshots/` folder in this repo, then update the paths below. -->
-
-| Hero Section | Skills & Experience |
-|---|---|
-| ![Hero Section](screenshots/hero.png) | ![Skills Section](screenshots/skills.png) |
-
-| Projects | Mobile View |
-|---|---|
-| ![Projects Section](screenshots/projects.png) | ![Mobile View](screenshots/mobile.png) |
-
----
 
 ## ✨ Features
 
