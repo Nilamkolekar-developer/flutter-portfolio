@@ -1,1 +1,0 @@
- C:\\Users\\satty\\Downloads\\portfolio_flutter\\portfolio_flutter\\build\\web\\manifest.json:  C:\\Users\\satty\\Downloads\\portfolio_flutter\\portfolio_flutter\\web\\index.html C:\\Users\\satty\\Downloads\\portfolio_flutter\\portfolio_flutter\\web\\manifest.json

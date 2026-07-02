@@ -238,8 +238,8 @@ class PersonalInfo {
   static const String email = "nilamkolekar26@gmail.com";
   static const String phone = "+91 9730584425";
   static const String location = "Pune, India"; // TODO
-  static const String github = "https://github.com/yourusername"; // TODO
-  static const String linkedin = "https://linkedin.com/in/yourusername"; // TODO
+  static const String github = "https://github.com/Nilamkolekar-developer";
+  static const String linkedin = "https://www.linkedin.com/in/nilam-shahaji-kolekar-62a2a2236";
   static const String resumeUrl = "assets/assets/pdf/Nilam-resume.pdf";
 }
 
@@ -546,7 +546,12 @@ class HeroSection extends StatelessWidget {
 
   Future<void> _launch(String url) async {
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) await launchUrl(uri, webOnlyWindowName: '_blank');
+    if (await canLaunchUrl(uri)) {
+      // mailto/tel links should hand off to the OS's default app, not open
+      // as a browser tab — only force a new tab for regular http(s) links.
+      final isWebLink = uri.scheme == 'http' || uri.scheme == 'https';
+      await launchUrl(uri, webOnlyWindowName: isWebLink ? '_blank' : null);
+    }
   }
 
   /// Fetches the PDF as raw bytes and forces a real download via a Blob
@@ -668,7 +673,6 @@ class HeroSection extends StatelessWidget {
                   children: [
                     _SocialIcon(child: const Icon(Icons.code, size: 18, color: AppColors.navy), onTap: () => _launch(PersonalInfo.github)),
                     _SocialIcon(child: const Text("in", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppColors.navy)), onTap: () => _launch(PersonalInfo.linkedin)),
-                    _SocialIcon(child: const Icon(Icons.email_outlined, size: 18, color: AppColors.navy), onTap: () => _launch("mailto:${PersonalInfo.email}")),
                   ],
                 ),
               ],
@@ -1340,7 +1344,10 @@ class ContactFooter extends StatelessWidget {
 
   Future<void> _launch(String url) async {
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) await launchUrl(uri, webOnlyWindowName: '_blank');
+    if (await canLaunchUrl(uri)) {
+      final isWebLink = uri.scheme == 'http' || uri.scheme == 'https';
+      await launchUrl(uri, webOnlyWindowName: isWebLink ? '_blank' : null);
+    }
   }
 
   @override
@@ -1379,18 +1386,18 @@ class ContactFooter extends StatelessWidget {
                 spacing: 16,
                 runSpacing: 16,
                 children: [
-                  ElevatedButton.icon(
-                    onPressed: () => _launch("mailto:${PersonalInfo.email}"),
-                    icon: const Icon(Icons.email_outlined, size: 18),
-                    label: const Text("Email Me"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accent,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 18),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
-                  ),
+                  // ElevatedButton.icon(
+                  //   onPressed: () => _launch("mailto:${PersonalInfo.email}"),
+                  //   icon: const Icon(Icons.email_outlined, size: 18),
+                  //   label: const Text("Email Me"),
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: AppColors.accent,
+                  //     foregroundColor: Colors.white,
+                  //     elevation: 0,
+                  //     padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 18),
+                  //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  //   ),
+                  // ),
                   OutlinedButton.icon(
                     onPressed: () => _launch(PersonalInfo.linkedin),
                     icon: const Text("in", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Colors.white)),
