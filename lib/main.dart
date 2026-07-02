@@ -523,11 +523,63 @@ class ProjectsData {
       ],
     ),
     ProjectItem(
+      title: "Autopeepal Demo Application",
+      subtitle: "Multi-protocol vehicle diagnostics",
+      tech: "Flutter/Dart, CAN2X, CAN2XG, RP1210 Dongle Communication",
+      points: [
+        "Built a diagnostic demo application supporting multiple dongle protocols, including CAN2X, CAN2XG, and RP1210, for cross-platform vehicle diagnostics.",
+        "Implemented diagnostic trouble code reading and ECU communication workflows across the supported dongle protocols.",
+      ],
+    ),
+    ProjectItem(
+      title: "iKonnect",
+      subtitle: "Vehicle diagnostic application",
+      // TODO: confirm exact dongle/protocol details if you'd like them
+      // called out the way CAN2X/RP1210 are for the Autopeepal app above.
+      tech: "Flutter/Dart, Dongle Communication, ECU Protocols",
+      points: [
+        "Built a diagnostic application enabling real-time vehicle communication and DTC (Diagnostic Trouble Code) reading via connected dongle hardware.",
+      ],
+    ),
+    ProjectItem(
+      title: "CLPL",
+      subtitle: "Jawa Yezdi diagnostic application",
+      // TODO: confirm exact dongle/protocol details if you'd like them
+      // called out the way CAN2X/RP1210 are for the Autopeepal app above.
+      tech: "Flutter/Dart, Dongle Communication, ECU Protocols",
+      points: [
+        "Built a diagnostic application for Jawa Yezdi motorcycles, replicating core diagnostic functionality — including ECU communication and DTC reading — for the brand's dealer network.",
+      ],
+    ),
+    ProjectItem(
       title: "ErpHrms",
       subtitle: "Enterprise HR Management System",
       tech: "Flutter, GetX, Firebase",
       points: [
-        "Built a cross-platform HR management app (onboarding, attendance, leave, payroll, performance reviews) using Firebase for real-time sync and authentication.",
+        "Built a cross-platform HR management app covering onboarding, attendance, leave, payroll, performance reviews, travel and compensation tracking, and role-based profile management.",
+        "Used Firebase for real-time sync and authentication across all modules.",
+      ],
+    ),
+    ProjectItem(
+      title: "CRM — Lead Management System",
+      subtitle: "Sales pipeline & lead conversion",
+      // TODO: confirm tech stack — assumed to match your usual stack since
+      // it wasn't specified; update if this used something different.
+      tech: "Flutter, GetX, Firebase",
+      points: [
+        "Built an end-to-end CRM covering lead generation, lead management, quotation generation, and lead-to-customer conversion tracking.",
+        "Designed the full sales pipeline flow from initial lead capture through quotation and final conversion.",
+      ],
+    ),
+    ProjectItem(
+      title: "MyoCircle",
+      subtitle: "Digital orofacial therapy & exercise platform",
+      // TODO: confirm tech stack — assumed to match your usual stack since
+      // it wasn't specified; update if this used something different.
+      tech: "Flutter, GetX, Firebase",
+      points: [
+        "Built a therapist-facing digital platform delivering personalized, orofacial breath-focused exercise journeys for users of all ages.",
+        "Designed interactive tools to help users build and maintain healthy exercise habits, whether self-guided or following a care team's plan.",
       ],
     ),
     ProjectItem(
@@ -536,6 +588,16 @@ class ProjectsData {
       tech: "React, JavaScript, SQL, AI Integrations",
       points: [
         "Built an AI-powered web app delivering interactive learning content and quizzes for grades 1–12.",
+      ],
+    ),
+    ProjectItem(
+      title: "Neo CBSE Learning",
+      subtitle: "Education content platform, grades 1–8",
+      // TODO: confirm tech stack — assumed to match your usual stack since
+      // it wasn't specified; update if this used something different.
+      tech: "Flutter, GetX, Firebase",
+      points: [
+        "Built an education content app providing notes, textbook PDFs, and MCQ-based study material for students from grades 1 to 8.",
       ],
     ),
   ];
@@ -1478,14 +1540,6 @@ class ProjectsSection extends StatelessWidget {
         ? double.infinity
         : (Responsive.contentMaxWidth(context) - 40) / 3;
 
-    final List<List<ProjectItem>> rows = [];
-    for (int i = 0; i < ProjectsData.items.length; i += 3) {
-      rows.add(ProjectsData.items.sublist(
-        i,
-        (i + 3 <= ProjectsData.items.length) ? i + 3 : ProjectsData.items.length,
-      ));
-    }
-
     return SectionWrapper(
       sectionKey: sectionKey,
       backgroundColor: AppColors.surface,
@@ -1496,34 +1550,21 @@ class ProjectsSection extends StatelessWidget {
           const SizedBox(height: 16),
           Text("Selected Work", style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 32),
-          for (final row in rows)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: isMobile
-                  ? Column(
-                      children: [
-                        for (final project in row)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 20),
-                            child: HoverScale(child: _ProjectCard(project: project, width: cardWidth)),
-                          ),
-                      ],
-                    )
-                  : IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          for (int i = 0; i < row.length; i++) ...[
-                            if (i > 0) const SizedBox(width: 20),
-                            SizedBox(
-                              width: cardWidth,
-                              child: HoverScale(child: _ProjectCard(project: row[i], width: cardWidth)),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-            ),
+          // A Wrap with a per-card minimum height, instead of forcing an
+          // exact IntrinsicHeight match across a row. Cards line up
+          // visually without risking overflow as content length varies —
+          // a floor can never be exceeded the way a hard ceiling can.
+          Wrap(
+            spacing: 20,
+            runSpacing: 20,
+            children: [
+              for (final project in ProjectsData.items)
+                SizedBox(
+                  width: cardWidth,
+                  child: HoverScale(child: _ProjectCard(project: project, width: cardWidth)),
+                ),
+            ],
+          ),
         ],
       ),
     );
@@ -1539,6 +1580,7 @@ class _ProjectCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: width,
+      height: 340,
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: AppColors.background,
@@ -1571,36 +1613,52 @@ class _ProjectCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          for (final point in project.points)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(
-                "• $point",
-                style: Theme.of(context).textTheme.bodyMedium,
+          // Every card is exactly the same height (set above). Content
+          // length varies a lot across projects (1-3 bullets, different
+          // numbers of tech tags), so this area scrolls internally rather
+          // than growing the card — that's what guarantees identical
+          // card heights can never overflow, no matter how much text a
+          // given project has.
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (final point in project.points)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Text(
+                        "• $point",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                  const SizedBox(height: 4),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      for (final tech in project.tech.split(',').map((t) => t.trim()))
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.accent.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            tech,
+                            style: const TextStyle(
+                              color: AppColors.accentDark,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              for (final tech in project.tech.split(',').map((t) => t.trim()))
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.accent.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    tech,
-                    style: const TextStyle(
-                      color: AppColors.accentDark,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 11,
-                    ),
-                  ),
-                ),
-            ],
           ),
         ],
       ),
