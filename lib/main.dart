@@ -1612,7 +1612,7 @@ class ContactFooter extends StatelessWidget {
                   style: const TextStyle(color: Color(0xFFB8C2D9), fontSize: 16, height: 1.6),
                 ),
               ),
-              const SizedBox(height: 36),
+               SizedBox(height: 36),
               Wrap(
                 alignment: WrapAlignment.center,
                 spacing: 16,
@@ -1631,12 +1631,12 @@ class ContactFooter extends StatelessWidget {
                   ),
                   OutlinedButton.icon(
                     onPressed: () => launchUrlSmart(PersonalInfo.github),
-                    icon: const Icon(Icons.code, size: 18),
-                    label: const Text("GitHub"),
+                    icon:  Icon(Icons.code, size: 18),
+                    label:  Text("GitHub"),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      side: const BorderSide(color: Color(0xFF33456B), width: 1.5),
-                      padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 18),
+                      side:  BorderSide(color: Color(0xFF33456B), width: 1.5),
+                      padding:  EdgeInsets.symmetric(horizontal: 26, vertical: 18),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                   ),
