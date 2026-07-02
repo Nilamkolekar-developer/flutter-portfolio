@@ -50,6 +50,7 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
   final GlobalKey _contactKey = GlobalKey();
 
   String _activeSection = "home";
+  bool _showScrollToTop = false;
 
   Map<String, GlobalKey> get _sectionKeys => {
         "home": _heroKey,
@@ -65,13 +66,30 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_updateActiveSection);
+    _scrollController.addListener(_updateScrollToTopVisibility);
   }
 
   @override
   void dispose() {
     _scrollController.removeListener(_updateActiveSection);
+    _scrollController.removeListener(_updateScrollToTopVisibility);
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _updateScrollToTopVisibility() {
+    final shouldShow = _scrollController.offset > 500;
+    if (shouldShow != _showScrollToTop) {
+      setState(() => _showScrollToTop = shouldShow);
+    }
+  }
+
+  void _scrollToTop() {
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
   }
 
   /// Determines which section is currently nearest the top of the
@@ -116,6 +134,22 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
         onNavTap: _scrollTo,
         onContactTap: () => _scrollTo("contact"),
         activeSection: _activeSection,
+      ),
+      floatingActionButton: AnimatedScale(
+        scale: _showScrollToTop ? 1 : 0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        child: AnimatedOpacity(
+          opacity: _showScrollToTop ? 1 : 0,
+          duration: const Duration(milliseconds: 200),
+          child: FloatingActionButton(
+            onPressed: _scrollToTop,
+            backgroundColor: AppColors.navy,
+            foregroundColor: Colors.white,
+            elevation: 2,
+            child: const Icon(Icons.keyboard_arrow_up),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         controller: _scrollController,
@@ -389,6 +423,10 @@ class PersonalInfo {
   static const String location = "Pune, India"; // TODO
   static const String github = "https://github.com/Nilamkolekar-developer";
   static const String linkedin = "https://www.linkedin.com/in/nilam-shahaji-kolekar-62a2a2236";
+  // wa.me expects the number with country code, no "+", spaces, or dashes.
+  static const String whatsappUrl = "https://wa.me/919730584425";
+  // Toggle this off once you're no longer actively looking.
+  static const bool openToWork = true;
   static const String resumeUrl = "assets/assets/pdf/Nilam-resume.pdf";
 }
 
@@ -450,6 +488,9 @@ class ExperienceData {
       points: [
         "Built and maintained Android and web features for an educational platform using Java, React, Firebase, and SQL.",
         "Owned frontend and backend development for two major applications, from planning through testing and deployment.",
+        // TODO: this is vague — a real number here (e.g. "reduced release-
+        // blocking bugs by ~30%", "cut crash rate from X% to Y%") reads far
+        // stronger to a recruiter skimming quickly than "reduced bug count".
         "Contributed to release planning and QA cycles, helping ship on schedule with reduced bug count and fewer post-release issues.",
       ],
     ),
@@ -649,12 +690,16 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           const SizedBox(width: 10),
-          Text(
-            PersonalInfo.name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
+          Flexible(
+            child: Text(
+              PersonalInfo.name,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+              ),
             ),
           ),
           if (!isMobile)
@@ -831,6 +876,10 @@ class HeroSection extends StatelessWidget {
               crossAxisAlignment:
                   isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
               children: [
+                if (PersonalInfo.openToWork) ...[
+                  const _OpenToWorkBadge(),
+                  const SizedBox(height: 16),
+                ],
                 const SectionLabel("Portfolio"),
                 const SizedBox(height: 20),
                 Text(
@@ -903,6 +952,7 @@ class HeroSection extends StatelessWidget {
                   children: [
                     _SocialIcon(child: const Icon(Icons.code, size: 18, color: AppColors.navy), onTap: () => launchUrlSmart(PersonalInfo.github)),
                     _SocialIcon(child: const Text("in", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppColors.navy)), onTap: () => launchUrlSmart(PersonalInfo.linkedin)),
+                    _SocialIcon(child: const Icon(Icons.chat_bubble_outline, size: 18, color: AppColors.navy), onTap: () => launchUrlSmart(PersonalInfo.whatsappUrl)),
                   ],
                 ),
               ],
@@ -958,6 +1008,47 @@ class _Blob extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+    );
+  }
+}
+
+/// A small pill signaling to recruiters that this person is actively
+/// looking for opportunities — the kind of thing that gets a portfolio
+/// noticed in a fast skim instead of read end-to-end.
+class _OpenToWorkBadge extends StatelessWidget {
+  const _OpenToWorkBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE7F7EE),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFB3E6C6)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: const BoxDecoration(
+              color: Color(0xFF16A34A),
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 8),
+          const Text(
+            "Open to new opportunities",
+            style: TextStyle(
+              color: Color(0xFF15803D),
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1457,13 +1548,27 @@ class _ProjectCard extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 8),
-          Text(
-            project.tech,
-            style: const TextStyle(
-              color: AppColors.accentDark,
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
-            ),
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              for (final tech in project.tech.split(',').map((t) => t.trim()))
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    tech,
+                    style: const TextStyle(
+                      color: AppColors.accentDark,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
       ),
@@ -1612,12 +1717,24 @@ class ContactFooter extends StatelessWidget {
                   style: const TextStyle(color: Color(0xFFB8C2D9), fontSize: 16, height: 1.6),
                 ),
               ),
-               SizedBox(height: 36),
+              const SizedBox(height: 36),
               Wrap(
                 alignment: WrapAlignment.center,
                 spacing: 16,
                 runSpacing: 16,
                 children: [
+                  ElevatedButton.icon(
+                    onPressed: () => launchUrlSmart(PersonalInfo.whatsappUrl),
+                    icon: const Icon(Icons.chat_bubble_outline, size: 18),
+                    label: const Text("WhatsApp Me"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF25D366),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 18),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
                   OutlinedButton.icon(
                     onPressed: () => launchUrlSmart(PersonalInfo.linkedin),
                     icon: const Text("in", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Colors.white)),
@@ -1631,12 +1748,12 @@ class ContactFooter extends StatelessWidget {
                   ),
                   OutlinedButton.icon(
                     onPressed: () => launchUrlSmart(PersonalInfo.github),
-                    icon:  Icon(Icons.code, size: 18),
-                    label:  Text("GitHub"),
+                    icon: const Icon(Icons.code, size: 18),
+                    label: const Text("GitHub"),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      side:  BorderSide(color: Color(0xFF33456B), width: 1.5),
-                      padding:  EdgeInsets.symmetric(horizontal: 26, vertical: 18),
+                      side: const BorderSide(color: Color(0xFF33456B), width: 1.5),
+                      padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 18),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                   ),
