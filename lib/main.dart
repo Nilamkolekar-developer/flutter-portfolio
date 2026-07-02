@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:html' as html;
 
@@ -667,9 +666,9 @@ class HeroSection extends StatelessWidget {
                   alignment: isMobile ? WrapAlignment.center : WrapAlignment.start,
                   spacing: 18,
                   children: [
-                    _SocialIcon(icon: FontAwesomeIcons.github, onTap: () => _launch(PersonalInfo.github)),
-                    _SocialIcon(icon: FontAwesomeIcons.linkedin, onTap: () => _launch(PersonalInfo.linkedin)),
-                    _SocialIcon(icon: FontAwesomeIcons.envelope, onTap: () => _launch("mailto:${PersonalInfo.email}")),
+                    _SocialIcon(child: const Icon(Icons.code, size: 18, color: AppColors.navy), onTap: () => _launch(PersonalInfo.github)),
+                    _SocialIcon(child: const Text("in", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppColors.navy)), onTap: () => _launch(PersonalInfo.linkedin)),
+                    _SocialIcon(child: const Icon(Icons.email_outlined, size: 18, color: AppColors.navy), onTap: () => _launch("mailto:${PersonalInfo.email}")),
                   ],
                 ),
               ],
@@ -712,9 +711,9 @@ class HeroSection extends StatelessWidget {
 }
 
 class _SocialIcon extends StatelessWidget {
-  final IconData icon;
+  final Widget child;
   final VoidCallback onTap;
-  const _SocialIcon({required this.icon, required this.onTap});
+  const _SocialIcon({required this.child, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -730,7 +729,7 @@ class _SocialIcon extends StatelessWidget {
           shape: BoxShape.circle,
           border: Border.all(color: AppColors.border),
         ),
-        child: FaIcon(icon, size: 18, color: AppColors.navy),
+        child: child,
       ),
     );
   }
@@ -1394,7 +1393,7 @@ class ContactFooter extends StatelessWidget {
                   ),
                   OutlinedButton.icon(
                     onPressed: () => _launch(PersonalInfo.linkedin),
-                    icon: const FaIcon(FontAwesomeIcons.linkedin, size: 16),
+                    icon: const Text("in", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Colors.white)),
                     label: const Text("LinkedIn"),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
@@ -1405,7 +1404,7 @@ class ContactFooter extends StatelessWidget {
                   ),
                   OutlinedButton.icon(
                     onPressed: () => _launch(PersonalInfo.github),
-                    icon: const FaIcon(FontAwesomeIcons.github, size: 16),
+                    icon: const Icon(Icons.code, size: 18),
                     label: const Text("GitHub"),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
