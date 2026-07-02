@@ -1,6 +1,41 @@
-# Flutter Web Portfolio
+# Nilam Kolekar — Flutter Developer Portfolio
 
-A corporate/professional single-page portfolio built with Flutter Web.
+A corporate/professional single-page portfolio built with Flutter Web, showcasing 2+ years of experience in cross-platform mobile and full-stack web development.
+
+### 🔗 [View Live Portfolio →](https://nilamkolekar-developer.github.io/flutter-portfolio/)
+
+---
+
+## 📸 Preview
+
+<!-- TODO: Replace these with real screenshots. Save them in a `screenshots/` folder in this repo, then update the paths below. -->
+
+| Hero Section | Skills & Experience |
+|---|---|
+| ![Hero Section](screenshots/hero.png) | ![Skills Section](screenshots/skills.png) |
+
+| Projects | Mobile View |
+|---|---|
+| ![Projects Section](screenshots/projects.png) | ![Mobile View](screenshots/mobile.png) |
+
+---
+
+## ✨ Features
+
+- Fully responsive layout — single column on mobile, multi-column grid on tablet/desktop
+- Smooth scroll navigation between sections (About, Skills, Experience, Projects, Education, Contact)
+- Downloadable resume (PDF) directly from the site
+- Clean, corporate visual style with a navy + accent-blue color palette
+- Built and deployed with a fully automated CI/CD pipeline (GitHub Actions → GitHub Pages)
+
+## 🛠️ Tech Stack
+
+- **Framework:** Flutter Web
+- **Language:** Dart
+- **Fonts:** Google Fonts (Poppins, Inter)
+- **Deployment:** GitHub Actions + GitHub Pages
+
+---
 
 ## Structure
 
@@ -9,7 +44,7 @@ lib/
   main.dart                 # App entry point + scroll navigation
   theme/app_theme.dart      # Colors & typography (navy/accent-blue palette)
   utils/responsive.dart     # Breakpoint helpers (mobile/tablet/desktop)
-  data/portfolio_data.dart  # ALL your content — edit this file to update text
+  data/portfolio_data.dart  # ALL content — edit this file to update text
   widgets/
     navbar.dart
     hero_section.dart
@@ -38,18 +73,21 @@ lib/
    ```
    Output goes to `build/web/` — deploy that folder to Firebase Hosting, GitHub Pages, Netlify, Vercel, etc.
 
-## Things to personalize (search for "TODO")
+## Personalizing
 
-- `lib/data/portfolio_data.dart`
-  - `PersonalInfo.name` — replace "Your Name"
-  - `email`, `phone`, `location`
-  - `github`, `linkedin` — your real profile URLs
-  - `resumeUrl` — add a real PDF at `assets/resume.pdf` and register it in `pubspec.yaml` under `flutter: assets:` if you add one
-- `lib/widgets/hero_section.dart`
-  - Replace the placeholder circle avatar with `Image.asset('assets/profile.jpg')` or `Image.network(...)` once you have a headshot
+- `lib/data/portfolio_data.dart` — all resume content (name, contact info, skills, experience, projects, education)
+- `assets/image/image.jpg` — profile photo
+- `assets/pdf/Nilam-resume.pdf` — downloadable resume
 
 ## Notes
 
-- All text content lives in one file (`portfolio_data.dart`) so you never need to touch UI code to update your resume details.
-- The layout is fully responsive: single column on mobile, wider grid layouts on tablet/desktop.
+- All text content lives in one file (`portfolio_data.dart`) so there's no need to touch UI code to update resume details.
 - Colors, fonts, and spacing are centralized in `app_theme.dart` and `responsive.dart` for easy restyling.
+
+---
+
+## 📫 Contact
+
+- **Email:** nilamkolekar26@gmail.com
+- **LinkedIn:** [linkedin.com/in/yourusername](https://linkedin.com/in/yourusername) <!-- TODO: update -->
+- **GitHub:** [@Nilamkolekar-developer](https://github.com/Nilamkolekar-developer)
