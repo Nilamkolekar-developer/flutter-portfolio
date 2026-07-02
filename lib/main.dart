@@ -952,7 +952,7 @@ class HeroSection extends StatelessWidget {
                   children: [
                     _SocialIcon(child: const Icon(Icons.code, size: 18, color: AppColors.navy), onTap: () => launchUrlSmart(PersonalInfo.github)),
                     _SocialIcon(child: const Text("in", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppColors.navy)), onTap: () => launchUrlSmart(PersonalInfo.linkedin)),
-                    _SocialIcon(child: const Icon(Icons.chat_bubble_outline, size: 18, color: AppColors.navy), onTap: () => launchUrlSmart(PersonalInfo.whatsappUrl)),
+                    _SocialIcon(child: const _WhatsAppIcon(size: 18, fallbackColor: AppColors.navy), onTap: () => launchUrlSmart(PersonalInfo.whatsappUrl)),
                   ],
                 ),
               ],
@@ -992,6 +992,38 @@ class HeroSection extends StatelessWidget {
       ),
         ),
       ],
+    );
+  }
+}
+
+/// The real WhatsApp logo, loaded from a stable Wikimedia-hosted PNG so we
+/// don't need to add an image-loading package. Falls back to a generic
+/// chat icon if the network image ever fails (e.g. offline preview).
+class _WhatsAppIcon extends StatelessWidget {
+  final double size;
+  final Color fallbackColor;
+  const _WhatsAppIcon({this.size = 20, this.fallbackColor = Colors.white});
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.network(
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/240px-WhatsApp.svg.png',
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) => Icon(
+        Icons.chat_bubble_outline,
+        size: size,
+        color: fallbackColor,
+      ),
+      loadingBuilder: (context, child, progress) {
+        if (progress == null) return child;
+        return SizedBox(
+          width: size,
+          height: size,
+          child: Icon(Icons.chat_bubble_outline, size: size, color: fallbackColor),
+        );
+      },
     );
   }
 }
@@ -1725,7 +1757,7 @@ class ContactFooter extends StatelessWidget {
                 children: [
                   ElevatedButton.icon(
                     onPressed: () => launchUrlSmart(PersonalInfo.whatsappUrl),
-                    icon: const Icon(Icons.chat_bubble_outline, size: 18),
+                    icon: const _WhatsAppIcon(size: 18, fallbackColor: Colors.white),
                     label: const Text("WhatsApp Me"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF25D366),
