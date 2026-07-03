@@ -406,7 +406,8 @@ class PersonalInfo {
   static const String name = "Nilam Shahaji Kolekar";
   static const String title = "Flutter Developer";
   static const String tagline =
-      "Building cross-platform mobile apps and full-stack web systems that ship.";
+      "From ECU diagnostic protocols to enterprise HR & CRM platforms — "
+      "I build production-ready Flutter apps that ship.";
   static const String summary =
       "Flutter Developer with 2+ years of experience building cross-platform "
       "mobile applications and full-stack web systems. Skilled in Flutter, "
@@ -513,7 +514,7 @@ class ProjectItem {
 class ProjectsData {
   static const List<ProjectItem> items = [
     ProjectItem(
-      title: "ECU Diagnostic Terminal Tool",
+      title: "ECU Diagnostic Tool",
       subtitle: "Kirloskar & Autopeepal",
       tech: "Flutter/Dart, Dongle Communication, ECU Protocols, WiFi, USB",
       points: [
@@ -1015,6 +1016,24 @@ class HeroSection extends StatelessWidget {
                     _SocialIcon(child: const Icon(Icons.code, size: 18, color: AppColors.navy), onTap: () => launchUrlSmart(PersonalInfo.github)),
                     _SocialIcon(child: const Text("in", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppColors.navy)), onTap: () => launchUrlSmart(PersonalInfo.linkedin)),
                     _SocialIcon(child: const _WhatsAppIcon(size: 18, fallbackColor: AppColors.navy), onTap: () => launchUrlSmart(PersonalInfo.whatsappUrl)),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment:
+                      isMobile ? MainAxisAlignment.center : MainAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.verified_outlined, size: 15, color: AppColors.slateLight),
+                    const SizedBox(width: 6),
+                    Text(
+                      "Diagnostic systems delivered for Kirloskar & Autopeepal",
+                      style: const TextStyle(
+                        color: AppColors.slateLight,
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
               ],
