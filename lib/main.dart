@@ -155,10 +155,12 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
         controller: _scrollController,
         child: Column(
           children: [
-            HeroSection(sectionKey: _heroKey, onViewWork: () => _scrollTo("projects")),
+            HeroSection(
+                sectionKey: _heroKey, onViewWork: () => _scrollTo("projects")),
             RevealOnScroll(child: AboutSection(sectionKey: _aboutKey)),
             RevealOnScroll(child: SkillsSection(sectionKey: _skillsKey)),
-            RevealOnScroll(child: ExperienceSection(sectionKey: _experienceKey)),
+            RevealOnScroll(
+                child: ExperienceSection(sectionKey: _experienceKey)),
             RevealOnScroll(child: ProjectsSection(sectionKey: _projectsKey)),
             RevealOnScroll(child: EducationSection(sectionKey: _educationKey)),
             RevealOnScroll(child: ContactFooter(sectionKey: _contactKey)),
@@ -409,7 +411,7 @@ class PersonalInfo {
       "From ECU diagnostic protocols to enterprise HR & CRM platforms — "
       "I build production-ready Flutter apps that ship.";
   static const String summary =
-      "Flutter Developer with 2+ years of experience building cross-platform "
+      "Flutter Developer with 2.5+ years of experience building cross-platform "
       "mobile applications and full-stack web systems. Skilled in Flutter, "
       "GetX state management, Firebase (real-time database, authentication), "
       "and REST API integration, with a strong foundation in Java, React, and "
@@ -423,7 +425,8 @@ class PersonalInfo {
   static const String phone = "+91 9730584425";
   static const String location = "Pune, India"; // TODO
   static const String github = "https://github.com/Nilamkolekar-developer";
-  static const String linkedin = "https://www.linkedin.com/in/nilam-shahaji-kolekar-62a2a2236";
+  static const String linkedin =
+      "https://www.linkedin.com/in/nilam-shahaji-kolekar-62a2a2236";
   // wa.me expects the number with country code, no "+", spaces, or dashes.
   static const String whatsappUrl = "https://wa.me/919730584425";
   // Toggle this off once you're no longer actively looking.
@@ -440,19 +443,38 @@ class SkillGroup {
 class SkillsData {
   static const List<SkillGroup> groups = [
     SkillGroup("Mobile Development", [
-      "Flutter", "Dart", "GetX", "Firebase (Realtime DB, Auth, Firestore)",
+      "Flutter",
+      "Dart",
+      "GetX",
+      "Firebase (Realtime DB, Auth, Firestore)",
       "Cross-platform iOS/Android",
     ]),
     SkillGroup("Web Development", [
-      "React", "JavaScript", "HTML5", "CSS3", "Bootstrap",
-      "Responsive Web Design", "Java", "Node.js", "Express.js",
+      "React",
+      "JavaScript",
+      "HTML5",
+      "CSS3",
+      "Bootstrap",
+      "Responsive Web Design",
+      "Java",
+      "Node.js",
+      "Express.js",
     ]),
     SkillGroup("Database & APIs", [
-      "SQL", "MongoDB", "RESTful APIs", "Third-party API Integration",
+      "SQL",
+      "MongoDB",
+      "RESTful APIs",
+      "Third-party API Integration",
     ]),
     SkillGroup("Tools & Practices", [
-      "Git", "GitHub", "GitLab", "VS Code", "Postman",
-      "Agile/Scrum", "Debugging", "Code Optimization",
+      "Git",
+      "GitHub",
+      "GitLab",
+      "VS Code",
+      "Postman",
+      "Agile/Scrum",
+      "Debugging",
+      "Code Optimization",
     ]),
   ];
 }
@@ -473,7 +495,7 @@ class ExperienceItem {
 class ExperienceData {
   static const List<ExperienceItem> items = [
     ExperienceItem(
-      role: "Junior Flutter Developer",
+      role: "Flutter Developer",
       company: "Autopeepal Technologies",
       period: "February 2026 – Present",
       points: [
@@ -483,9 +505,21 @@ class ExperienceData {
       ],
     ),
     ExperienceItem(
+      role: "Flutter Developer",
+      company: "ExcellentMinds",
+      period: "May 2025 – December 2025",
+      points: [
+        "Developed and maintained cross-platform mobile applications using Flutter and Dart, focusing on scalable architecture and responsive UI design.",
+        "Integrated RESTful APIs, implemented state management, and developed reusable widgets to improve application functionality and maintainability.",
+        "Collaborated with backend developers, UI/UX designers, and QA teams to implement new features, resolve bugs, and optimize application performance.",
+        "Implemented native Android functionalities using Kotlin and Flutter platform channels to enhance mobile application capabilities.",
+        "Participated in code reviews, debugging, testing, and application deployment processes to deliver high-quality software solutions.",
+      ],
+    ),
+    ExperienceItem(
       role: "Full Stack Developer",
       company: "Global Edutech Pvt Ltd.",
-      period: "May 2024 – January 2026",
+      period: "May 2024 – April 2025",
       points: [
         "Built and maintained Android and web features for an educational platform using Java, React, Firebase, and SQL.",
         "Owned frontend and backend development for two major applications, from planning through testing and deployment.",
@@ -725,7 +759,11 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   static const List<String> _navItems = [
-    "About", "Skills", "Experience", "Projects", "Education",
+    "About",
+    "Skills",
+    "Experience",
+    "Projects",
+    "Education",
   ];
 
   @override
@@ -749,7 +787,10 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             child: const Text(
               "N",
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 15),
             ),
           ),
           const SizedBox(width: 10),
@@ -785,7 +826,8 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
             const Spacer(),
           if (!isMobile) ...[
             TextButton(
-              onPressed: () => downloadResume(PersonalInfo.resumeUrl, "Nilam-resume.pdf"),
+              onPressed: () =>
+                  downloadResume(PersonalInfo.resumeUrl, "Nilam-resume.pdf"),
               style: TextButton.styleFrom(foregroundColor: Colors.white70),
               child: const Text(
                 "Resume",
@@ -799,18 +841,19 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
                 backgroundColor: Colors.white,
                 foregroundColor: AppColors.navy,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
               ),
-              child: const Text("Contact", style: TextStyle(fontWeight: FontWeight.w600)),
+              child: const Text("Contact",
+                  style: TextStyle(fontWeight: FontWeight.w600)),
             ),
           ] else
             PopupMenuButton<String>(
               icon: const Icon(Icons.menu, color: Colors.white),
-              onSelected: (v) =>
-                  v == "contact" ? onContactTap() : onNavTap(v),
+              onSelected: (v) => v == "contact" ? onContactTap() : onNavTap(v),
               itemBuilder: (context) => [
                 for (final item in _navItems)
                   PopupMenuItem(
@@ -833,7 +876,8 @@ class _NavButton extends StatelessWidget {
   final String label;
   final bool isActive;
   final VoidCallback onTap;
-  const _NavButton({required this.label, required this.isActive, required this.onTap});
+  const _NavButton(
+      {required this.label, required this.isActive, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -904,7 +948,8 @@ class HeroSection extends StatelessWidget {
   final GlobalKey sectionKey;
   final VoidCallback onViewWork;
 
-  const HeroSection({super.key, required this.sectionKey, required this.onViewWork});
+  const HeroSection(
+      {super.key, required this.sectionKey, required this.onViewWork});
 
   @override
   Widget build(BuildContext context) {
@@ -924,153 +969,174 @@ class HeroSection extends StatelessWidget {
           child: _Blob(size: 300, color: AppColors.navy.withOpacity(0.04)),
         ),
         SectionWrapper(
-      sectionKey: sectionKey,
-      backgroundColor: Colors.transparent,
-      extraTopPadding: 40,
-      child: Flex(
-        direction: isMobile ? Axis.vertical : Axis.horizontal,
-        crossAxisAlignment: isMobile
-            ? CrossAxisAlignment.center
-            : CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            flex: isMobile ? 0 : 3,
-            child: Column(
-              crossAxisAlignment:
-                  isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-              children: [
-                if (PersonalInfo.openToWork) ...[
-                  const _OpenToWorkBadge(),
-                  const SizedBox(height: 16),
-                ],
-                const SectionLabel("Portfolio"),
-                const SizedBox(height: 20),
-                Text(
-                  PersonalInfo.name,
-                  textAlign: isMobile ? TextAlign.center : TextAlign.start,
-                  style: (isMobile
-                          ? Theme.of(context).textTheme.displayMedium
-                          : Theme.of(context).textTheme.displayLarge)
-                      ?.copyWith(color: AppColors.navy),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  PersonalInfo.title,
-                  textAlign: isMobile ? TextAlign.center : TextAlign.start,
-                  style: const TextStyle(
-                    color: AppColors.accent,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 560),
-                  child: Text(
-                    PersonalInfo.tagline,
-                    textAlign: isMobile ? TextAlign.center : TextAlign.start,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                Wrap(
-                  alignment: isMobile ? WrapAlignment.center : WrapAlignment.start,
-                  spacing: 14,
-                  runSpacing: 14,
+          sectionKey: sectionKey,
+          backgroundColor: Colors.transparent,
+          extraTopPadding: 40,
+          child: Flex(
+            direction: isMobile ? Axis.vertical : Axis.horizontal,
+            crossAxisAlignment: isMobile
+                ? CrossAxisAlignment.center
+                : CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: isMobile ? 0 : 3,
+                child: Column(
+                  crossAxisAlignment: isMobile
+                      ? CrossAxisAlignment.center
+                      : CrossAxisAlignment.start,
                   children: [
-                    ElevatedButton(
-                      onPressed: onViewWork,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accent,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 28, vertical: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Text("View My Work"),
-                    ),
-                    OutlinedButton(
-                      onPressed: () => downloadResume(
-                          PersonalInfo.resumeUrl, "Nilam-resume.pdf"),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.navy,
-                        side: const BorderSide(color: AppColors.border, width: 1.5),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 28, vertical: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Text("Download Resume"),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-                Wrap(
-                  alignment: isMobile ? WrapAlignment.center : WrapAlignment.start,
-                  spacing: 18,
-                  children: [
-                    _SocialIcon(child: const Icon(Icons.code, size: 18, color: AppColors.navy), onTap: () => launchUrlSmart(PersonalInfo.github)),
-                    _SocialIcon(child: const Text("in", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppColors.navy)), onTap: () => launchUrlSmart(PersonalInfo.linkedin)),
-                    _SocialIcon(child: const _WhatsAppIcon(size: 18, fallbackColor: AppColors.navy), onTap: () => launchUrlSmart(PersonalInfo.whatsappUrl)),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment:
-                      isMobile ? MainAxisAlignment.center : MainAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.verified_outlined, size: 15, color: AppColors.slateLight),
-                    const SizedBox(width: 6),
+                    if (PersonalInfo.openToWork) ...[
+                      const _OpenToWorkBadge(),
+                      const SizedBox(height: 16),
+                    ],
+                    const SectionLabel("Portfolio"),
+                    const SizedBox(height: 20),
                     Text(
-                      "Diagnostic systems delivered for Kirloskar & Autopeepal",
+                      PersonalInfo.name,
+                      textAlign: isMobile ? TextAlign.center : TextAlign.start,
+                      style: (isMobile
+                              ? Theme.of(context).textTheme.displayMedium
+                              : Theme.of(context).textTheme.displayLarge)
+                          ?.copyWith(color: AppColors.navy),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      PersonalInfo.title,
+                      textAlign: isMobile ? TextAlign.center : TextAlign.start,
                       style: const TextStyle(
-                        color: AppColors.slateLight,
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w500,
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
                       ),
+                    ),
+                    const SizedBox(height: 20),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 560),
+                      child: Text(
+                        PersonalInfo.tagline,
+                        textAlign:
+                            isMobile ? TextAlign.center : TextAlign.start,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    Wrap(
+                      alignment:
+                          isMobile ? WrapAlignment.center : WrapAlignment.start,
+                      spacing: 14,
+                      runSpacing: 14,
+                      children: [
+                        ElevatedButton(
+                          onPressed: onViewWork,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.accent,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 28, vertical: 18),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text("View My Work"),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => downloadResume(
+                              PersonalInfo.resumeUrl, "Nilam-resume.pdf"),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.navy,
+                            side: const BorderSide(
+                                color: AppColors.border, width: 1.5),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 28, vertical: 18),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text("Download Resume"),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                    Wrap(
+                      alignment:
+                          isMobile ? WrapAlignment.center : WrapAlignment.start,
+                      spacing: 18,
+                      children: [
+                        _SocialIcon(
+                            child: const Icon(Icons.code,
+                                size: 18, color: AppColors.navy),
+                            onTap: () => launchUrlSmart(PersonalInfo.github)),
+                        _SocialIcon(
+                            child: const Text("in",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 16,
+                                    color: AppColors.navy)),
+                            onTap: () => launchUrlSmart(PersonalInfo.linkedin)),
+                        _SocialIcon(
+                            child: const _WhatsAppIcon(
+                                size: 18, fallbackColor: AppColors.navy),
+                            onTap: () =>
+                                launchUrlSmart(PersonalInfo.whatsappUrl)),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: isMobile
+                          ? MainAxisAlignment.center
+                          : MainAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.verified_outlined,
+                            size: 15, color: AppColors.slateLight),
+                        const SizedBox(width: 6),
+                        Text(
+                          "Diagnostic systems delivered for Kirloskar & Autopeepal",
+                          style: const TextStyle(
+                            color: AppColors.slateLight,
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
-                ),
-              ],
-            ),
-          ),
-          if (!isMobile) const SizedBox(width: 48),
-          if (!isMobile)
-            Expanded(
-              flex: 2,
-              child: Center(
-                child: Container(
-                  width: 320,
-                  height: 320,
-                  decoration: BoxDecoration(
-                    color: AppColors.navy.withOpacity(0.05),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.border, width: 2),
-                  ),
-                  child: ClipOval(
-                    child: Image.asset(
-                      'assets/image/image.jpg',
-                      width: 320,
-                      height: 320,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.person_outline,
-                        size: 140,
-                        color: AppColors.slateLight,
-                      ),
-                    ),
-                  ),
                 ),
               ),
-            ),
-        ],
-      ),
+              if (!isMobile) const SizedBox(width: 48),
+              if (!isMobile)
+                Expanded(
+                  flex: 2,
+                  child: Center(
+                    child: Container(
+                      width: 320,
+                      height: 320,
+                      decoration: BoxDecoration(
+                        color: AppColors.navy.withOpacity(0.05),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.border, width: 2),
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/image/image.jpg',
+                          width: 320,
+                          height: 320,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.topCenter,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(
+                            Icons.person_outline,
+                            size: 140,
+                            color: AppColors.slateLight,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ],
     );
@@ -1102,7 +1168,8 @@ class _WhatsAppIcon extends StatelessWidget {
         return SizedBox(
           width: size,
           height: size,
-          child: Icon(Icons.chat_bubble_outline, size: size, color: fallbackColor),
+          child:
+              Icon(Icons.chat_bubble_outline, size: size, color: fallbackColor),
         );
       },
     );
@@ -1319,7 +1386,8 @@ class SkillsSection extends StatelessWidget {
         children: [
           const SectionLabel("Skills"),
           const SizedBox(height: 16),
-          Text("Technical Expertise", style: Theme.of(context).textTheme.headlineMedium),
+          Text("Technical Expertise",
+              style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 32),
           for (final row in rows)
             Padding(
@@ -1330,7 +1398,9 @@ class SkillsSection extends StatelessWidget {
                         for (final group in row)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 20),
-                            child: HoverScale(child: _SkillCard(group: group, width: cardWidth)),
+                            child: HoverScale(
+                                child:
+                                    _SkillCard(group: group, width: cardWidth)),
                           ),
                       ],
                     )
@@ -1342,7 +1412,9 @@ class SkillsSection extends StatelessWidget {
                             if (i > 0) const SizedBox(width: 20),
                             SizedBox(
                               width: cardWidth,
-                              child: HoverScale(child: _SkillCard(group: row[i], width: cardWidth)),
+                              child: HoverScale(
+                                  child: _SkillCard(
+                                      group: row[i], width: cardWidth)),
                             ),
                           ],
                         ],
@@ -1381,7 +1453,8 @@ class _SkillCard extends StatelessWidget {
             children: [
               for (final skill in group.skills)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppColors.accent.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(20),
@@ -1420,7 +1493,8 @@ class ExperienceSection extends StatelessWidget {
         children: [
           const SectionLabel("Experience"),
           const SizedBox(height: 16),
-          Text("Where I've Worked", style: Theme.of(context).textTheme.headlineMedium),
+          Text("Where I've Worked",
+              style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 32),
           for (int i = 0; i < ExperienceData.items.length; i++)
             _TimelineItem(
@@ -1447,7 +1521,8 @@ class _TimelineItem extends StatelessWidget {
             left: 6,
             top: 20,
             bottom: 0,
-            child: SizedBox(width: 2, child: ColoredBox(color: AppColors.border)),
+            child:
+                SizedBox(width: 2, child: ColoredBox(color: AppColors.border)),
           ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1481,9 +1556,11 @@ class _TimelineItem extends StatelessWidget {
                           spacing: 12,
                           runSpacing: 6,
                           children: [
-                            Text(item.role, style: Theme.of(context).textTheme.titleLarge),
+                            Text(item.role,
+                                style: Theme.of(context).textTheme.titleLarge),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
                                 color: AppColors.navy.withOpacity(0.06),
                                 borderRadius: BorderRadius.circular(6),
@@ -1525,7 +1602,8 @@ class _TimelineItem extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     point,
-                                    style: Theme.of(context).textTheme.bodyMedium,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
                                   ),
                                 ),
                               ],
@@ -1567,7 +1645,8 @@ class ProjectsSection extends StatelessWidget {
         children: [
           const SectionLabel("Projects"),
           const SizedBox(height: 16),
-          Text("Selected Work", style: Theme.of(context).textTheme.headlineMedium),
+          Text("Selected Work",
+              style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 32),
           // A Wrap with a per-card minimum height, instead of forcing an
           // exact IntrinsicHeight match across a row. Cards line up
@@ -1580,7 +1659,8 @@ class ProjectsSection extends StatelessWidget {
               for (final project in ProjectsData.items)
                 SizedBox(
                   width: cardWidth,
-                  child: HoverScale(child: _ProjectCard(project: project, width: cardWidth)),
+                  child: HoverScale(
+                      child: _ProjectCard(project: project, width: cardWidth)),
                 ),
             ],
           ),
@@ -1657,9 +1737,11 @@ class _ProjectCard extends StatelessWidget {
                     spacing: 6,
                     runSpacing: 6,
                     children: [
-                      for (final tech in project.tech.split(',').map((t) => t.trim()))
+                      for (final tech
+                          in project.tech.split(',').map((t) => t.trim()))
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: AppColors.accent.withOpacity(0.08),
                             borderRadius: BorderRadius.circular(20),
@@ -1710,34 +1792,37 @@ class EducationSection extends StatelessWidget {
               children: [
                 const SectionLabel("Education"),
                 const SizedBox(height: 16),
-                Text("Academic Background", style: Theme.of(context).textTheme.headlineMedium),
+                Text("Academic Background",
+                    style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 24),
                 for (final edu in EducationData.items)
                   ConstrainedBox(
                     constraints: const BoxConstraints(minHeight: 110),
                     child: Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.border),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(edu.degree, style: Theme.of(context).textTheme.titleMedium),
-                        const SizedBox(height: 6),
-                        Text(edu.institute,
-                            style: const TextStyle(
-                                color: AppColors.accent, fontWeight: FontWeight.w600)),
-                        const SizedBox(height: 6),
-                        Text("${edu.score}  ·  ${edu.period}",
-                            style: Theme.of(context).textTheme.bodyMedium),
-                      ],
-                    ),
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(edu.degree,
+                              style: Theme.of(context).textTheme.titleMedium),
+                          const SizedBox(height: 6),
+                          Text(edu.institute,
+                              style: const TextStyle(
+                                  color: AppColors.accent,
+                                  fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 6),
+                          Text("${edu.score}  ·  ${edu.period}",
+                              style: Theme.of(context).textTheme.bodyMedium),
+                        ],
+                      ),
                     ),
                   ),
               ],
@@ -1752,31 +1837,32 @@ class EducationSection extends StatelessWidget {
               children: [
                 const SectionLabel("Achievements"),
                 const SizedBox(height: 16),
-                Text("Highlights", style: Theme.of(context).textTheme.headlineMedium),
+                Text("Highlights",
+                    style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 24),
                 for (final achievement in AchievementsData.items)
                   ConstrainedBox(
                     constraints: const BoxConstraints(minHeight: 88),
                     child: Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 14),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.navy.withOpacity(0.04),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.emoji_events_outlined,
-                            color: AppColors.accent, size: 20),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(achievement,
-                              style: Theme.of(context).textTheme.bodyMedium),
-                        ),
-                      ],
-                    ),
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 14),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: AppColors.navy.withOpacity(0.04),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.emoji_events_outlined,
+                              color: AppColors.accent, size: 20),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(achievement,
+                                style: Theme.of(context).textTheme.bodyMedium),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
               ],
@@ -1811,10 +1897,8 @@ class ContactFooter extends StatelessWidget {
               Text(
                 "Let's Work Together",
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .displayMedium
-                    ?.copyWith(color: Colors.white, fontSize: isMobile ? 28 : 36),
+                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                    color: Colors.white, fontSize: isMobile ? 28 : 36),
               ),
               const SizedBox(height: 16),
               ConstrainedBox(
@@ -1823,7 +1907,8 @@ class ContactFooter extends StatelessWidget {
                   "Have a project in mind or an opening on your team? "
                   "I'd love to hear from you.",
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Color(0xFFB8C2D9), fontSize: 16, height: 1.6),
+                  style: const TextStyle(
+                      color: Color(0xFFB8C2D9), fontSize: 16, height: 1.6),
                 ),
               ),
               const SizedBox(height: 36),
@@ -1834,25 +1919,35 @@ class ContactFooter extends StatelessWidget {
                 children: [
                   ElevatedButton.icon(
                     onPressed: () => launchUrlSmart(PersonalInfo.whatsappUrl),
-                    icon: const _WhatsAppIcon(size: 18, fallbackColor: Colors.white),
+                    icon: const _WhatsAppIcon(
+                        size: 18, fallbackColor: Colors.white),
                     label: const Text("WhatsApp Me"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF25D366),
                       foregroundColor: Colors.white,
                       elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 18),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 26, vertical: 18),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
                     ),
                   ),
                   OutlinedButton.icon(
                     onPressed: () => launchUrlSmart(PersonalInfo.linkedin),
-                    icon: const Text("in", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Colors.white)),
+                    icon: const Text("in",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 15,
+                            color: Colors.white)),
                     label: const Text("LinkedIn"),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      side: const BorderSide(color: Color(0xFF33456B), width: 1.5),
-                      padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 18),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      side: const BorderSide(
+                          color: Color(0xFF33456B), width: 1.5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 26, vertical: 18),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
                     ),
                   ),
                   OutlinedButton.icon(
@@ -1861,9 +1956,12 @@ class ContactFooter extends StatelessWidget {
                     label: const Text("GitHub"),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      side: const BorderSide(color: Color(0xFF33456B), width: 1.5),
-                      padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 18),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      side: const BorderSide(
+                          color: Color(0xFF33456B), width: 1.5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 26, vertical: 18),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
                     ),
                   ),
                 ],

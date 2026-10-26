@@ -408,7 +408,7 @@ class PersonalInfo {
   static const String tagline =
       "Building cross-platform mobile apps and full-stack web systems that ship.";
   static const String summary =
-      "Flutter Developer with 2+ years of experience building cross-platform "
+      "Flutter Developer with 2.5+ years of experience building cross-platform "
       "mobile applications and full-stack web systems. Skilled in Flutter, "
       "GetX state management, Firebase (real-time database, authentication), "
       "and REST API integration, with a strong foundation in Java, React, and "
@@ -468,7 +468,7 @@ class ExperienceItem {
 class ExperienceData {
   static const List<ExperienceItem> items = [
     ExperienceItem(
-      role: "Junior Flutter Developer",
+      role: "Flutter Developer",
       company: "Autopeepal Technologies",
       period: "February 2026 – Present",
       points: [
